@@ -1,3 +1,4 @@
+import DialogDelete from "@/components/DialogDelete";
 import IsError from "@/components/IsError";
 import IsLoading from "@/components/IsLoading";
 import ManagerHeader from "@/components/ManagerHeader";
@@ -9,7 +10,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -30,10 +30,11 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { listProducts } from "@/services/productService";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteProduct, listProducts } from "@/services/productService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Products: React.FC = () => {
   const [pageNumber, setPageNumber] = useState<number>(1);
@@ -41,6 +42,8 @@ const Products: React.FC = () => {
   const [inputKeyword, setInputKeyword] = useState<string>();
   const [keyword, setKeyword] = useState<string>();
   const queryClient = useQueryClient();
+
+  // FETCH
   const {
     data: products,
     isLoading,
@@ -52,6 +55,18 @@ const Products: React.FC = () => {
     refetchOnWindowFocus: false,
     retry: 2,
     refetchOnReconnect: true,
+  });
+
+  // MUTATE
+  const mutationDelete = useMutation({
+    mutationFn: deleteProduct,
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["products"] });
+      toast.success("Xoá category thành công!");
+    },
+    onError: () => {
+      toast.error("Error");
+    },
   });
   const totalPages = products?.data.total_pages;
   if (isLoading) return <IsLoading />;
@@ -137,7 +152,20 @@ const Products: React.FC = () => {
                               <Label htmlFor="sale">Sale:</Label>
                               <Input id="sale" value={p.sale} readOnly />
                             </div>
-                            <div></div>
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="w-full">
+                                <Label htmlFor="name">Create at:</Label>
+                                <Input id="name" value={p.createdAt} readOnly />
+                              </div>
+                              <div className="w-full">
+                                <Label htmlFor="alias">Update at:</Label>
+                                <Input
+                                  id="alias"
+                                  value={p.updatedAt}
+                                  readOnly
+                                />
+                              </div>
+                            </div>
                           </TabsContent>
                           <TabsContent value="description">
                             <div>
@@ -186,8 +214,11 @@ const Products: React.FC = () => {
                             </ScrollArea>
                           </TabsContent>
                           <TabsContent value="details">
-                            {p.productDetails.map((d: any) => (
-                              <div className="flex items-center gap-2">
+                            {p.productDetails.map((d: any, index: number) => (
+                              <div
+                                key={index}
+                                className="flex items-center gap-2"
+                              >
                                 <div>
                                   <Label>Name:</Label>
                                   <Input value={d.name} readOnly />
@@ -211,9 +242,14 @@ const Products: React.FC = () => {
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  <Link to={`/category/${p.id}`}>
+                  <Link to={`/product/${p.id}`}>
                     <Button>Update</Button>
                   </Link>
+                  <DialogDelete
+                    entityId={p.id}
+                    entity="product"
+                    mutationDelete={mutationDelete}
+                  />
                 </TableCell>
               </TableRow>
             ))}
