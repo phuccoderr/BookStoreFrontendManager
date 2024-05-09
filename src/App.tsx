@@ -20,6 +20,7 @@ import UpdateCategory from "./pages/categories/UpdateCategory";
 import Products from "./pages/products/Products";
 import AddProduct from "./pages/products/AddProduct";
 import UpdateProduct from "./pages/products/UpdateProduct";
+import Customers from "./pages/customers/Customers";
 
 const App: React.FC = () => {
   return (
@@ -51,6 +52,8 @@ const App: React.FC = () => {
             <Route path="/products" Component={Products} />
             <Route path="/product" Component={AddProduct} />
             <Route path="/product/:productId" Component={UpdateProduct} />
+
+            <Route path="/customers" Component={Customers} />
           </Route>
         </Routes>
       </div>

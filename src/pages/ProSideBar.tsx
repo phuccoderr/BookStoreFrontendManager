@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import React, { Dispatch, ReactNode, useState } from "react";
 import { Menu, MenuItem, Sidebar } from "react-pro-sidebar";
 import { Link } from "react-router-dom";
@@ -8,6 +7,7 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { RiFileUserLine } from "react-icons/ri";
 import { BiCategory } from "react-icons/bi";
 import { MdProductionQuantityLimits } from "react-icons/md";
+import { RiCustomerService2Line } from "react-icons/ri";
 
 interface customItem {
   title: string;
@@ -90,6 +90,14 @@ const ProSideBar: React.FC = () => {
               title="PRODUCTS"
               to="/products"
               icon={<MdProductionQuantityLimits />}
+              selected={selected}
+              setSelected={setSelected}
+            ></Item>
+
+            <Item
+              title="CUSTOMERS"
+              to="/customers"
+              icon={<RiCustomerService2Line />}
               selected={selected}
               setSelected={setSelected}
             ></Item>
